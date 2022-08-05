@@ -1,3 +1,4 @@
+from msilib import make_id
 from msilib.schema import Control
 import os
 from os.path import isfile, join
@@ -37,6 +38,8 @@ def dictify(breakdownlist):
             dirdict[k][v][a].append(d)
     return dirdict
 
+
+#Takes unparsed list of files, unit time, and experimental subgroup and returns the details about the smallest image in a dictionary
 def smallestImgDim(breakdownlist):
     data = {'min_width':0,'min_height':0,'min_pix_ct':0,'file_path':""}
     for k, v, a, d in breakdownlist:
@@ -49,11 +52,13 @@ def smallestImgDim(breakdownlist):
                 data['file_path'] = d
     return data
 
+#Takes return from previous function and the path of the image being resized and returns the smaller image
 def ensmallenImg(smallestimgdim, newpath):
     image = Image.open(newpath)
     smallimage = image.resize((smallestimgdim['min_width'],smallestimgdim['min_height']))
-    smallimage.save(newpath)
+    return smallimage
 
+#Takes parsed dictionary and returns a dictionary for the max number of files in each secondary subgroup, this determines the height of the y-axis as it relates to the grid
 def getMaxImages(breakdowndict):
     maximgdict = {}
     groupslist = list(breakdowndict.keys())
@@ -66,30 +71,48 @@ def getMaxImages(breakdowndict):
             if items not in maxbyweek:
                 maxbyweek[items] = [len(maximgdict[names][items])]
             else:
+                maxbyweek[items].append(len(maximgdict[names][items]))
     for weeks in maxbyweek:
         maxentry = {weeks: max(maxbyweek[weeks])}
         maxbyweek.update(maxentry)
     return maxbyweek
-   
-def makeBanner(dimensions, name):
+
+
+#Takes dictionary from previous function and a string that represents the text to be added to the image, used to make side-headers for each subgroup
+def makeHeader(dimensions, name):
     width = dimensions['min_width']
     height = dimensions['min_height']
-    myFont = ImageFont.truetype("Arial.ttf", 16)
-    background = Image.new(mode = "RGB", size = (width, height), color = 'white')
+    myFont = ImageFont.truetype("arial.ttf", 16)
+    background = Image.new(mode = "RGB", size = (width, height), color = 'black')
     w, h = draw.textsize(name, font = myFont)
     draw = ImageDraw.draw(background)
     draw.text((((width - w)/2),(height - h)/2), name, fill = "white")
     return background
 
 
+#Generates the first column of the montage grid, leaving two spaces at the top for the subgroup headers. The height of each y-axis subgroup is determined by the maximum number of files present in that subgroup. The order of the subgroup is determined alphabetically
+def makeYLegend(dirpath):
+    dirlist = breakdown(listify(dirpath))
+    dirdict = dictify(dirlist)
+    heightbyweek = getMaxImages(dirdict)
+    dimensions = smallestImgDim(dirlist)
+    unit_height = dimensions['min_height']
+    height = (sum(heightbyweek.values()) + 2)*dimensions['min_height']
+    sidebar = Image.new('RGB', (dimensions['min_width'], height))
+    x_offset = 0
+    while x_offset < 2 * unit_height:
+        blankheader = makeHeader(dimensions, '')
+        sidebar.paste(blankheader, (x_offset, 0))
+        x_offset += unit_height
+    for weeks in sorted(heightbyweek.keys()):
+        dimensions['min_height'] = heightbyweek[weeks] * unit_height
+        weekheader = makeHeader(dimensions, weeks)
+        sidebar.paste(weekheader, (x_offset, 0))
+        x_offset += unit_height
+    return sidebar
 
-
-
-
-
-test1 = dictify(breakdown(listify(dirpath)))
-
-print(getMaxImages(test1))
+def makeColumns(breakdowndict)
+print(dictify(breakdown(listify(dirpath))))
 
 
 
