@@ -4,7 +4,7 @@ import os
 from os.path import isfile, join
 from PIL import Image, ImageDraw, ImageFont
 
-dirpath = 'C:\\Users\\Thomas.Henshaw001\\Development\\montague\\2022_Ben\\ML_amp timecourse'
+vompath = 'C:\\Users\\Thomas.Henshaw001\\Development\\montague\\2022_Ben\\ML_amp timecourse'
 
 def listify(mypath):
     listdir = []
@@ -98,7 +98,7 @@ def makeYLegend(dirpath):
     dimensions = smallestImgDim(dirlist)
     unit_height = dimensions['min_height']
     height = (sum(heightbyweek.values()) + 2)*dimensions['min_height']
-    sidebar = Image.new('RGB', (dimensions['min_width'], height))
+    sidebar = Image.new('RGB', (dimensions['min_width'], height), 'black')
     x_offset = 0
     while x_offset < 2 * unit_height:
         blankheader = makeHeader(dimensions, '')
@@ -111,8 +111,60 @@ def makeYLegend(dirpath):
         x_offset += unit_height
     return sidebar
 
-def makeColumns(breakdowndict)
-print(dictify(breakdown(listify(dirpath))))
+def makeColumns(dirpath):
+    dirlist = breakdown(listify(dirpath))
+    dirdict = dictify(dirlist)
+    heightbyweek = getMaxImages(dirdict)
+    dimensions = smallestImgDim(dirlist)
+    unit_height = dimensions['min_height']
+    unit_width = dimensions['min_width']
+    height = (sum(heightbyweek.values()) + 2) * unit_height
+    width = 1
+    for i in dirdict.keys():
+        width += len(dirdict[i].keys())
+    width = width * dimensions['min_width']
+    height = (sum(heightbyweek.values()) + 2) * unit_height
+    x_offset = 0
+    y_offset = 0
+    #graphcanvas = Image.new('RGB', (width, height), 'black')
+    #graphcanvas.paste(makeYLegend(dirpath), (x_offset, y_offset))
+    x_offset = unit_width
+    for groups in sorted(dirdict.keys()):
+        print(groups)
+        '''graphcanvas.paste(makeHeader({
+            'min_width' : len(dirdict[groups].keys())*unit_width, 
+            'min_height' : unit_height
+            }, groups),
+            box = (x_offset, y_offset)
+            )'''
+        y_offset += unit_height
+        print(str(y_offset) + ": y_offset after group banner made, same as for animal banner")
+        print(str(x_offset) + ": x_offset after group banner made")
+        for animals in sorted(dirdict[groups].keys()):
+            print(animals + ": name of animal") #Makes leading header for animal column
+            #makeHeader(dimensions, animals)
+            for weeks in sorted(dirdict[groups][animals]):
+                for files in sorted(dirdict[groups][animals][weeks]):
+                    print(files) # replace with placing an image at this file location at the current point
+                    y_offset += unit_height
+                    print(str(y_offset) + ": y_offset after file is place")
+                snaps = len(dirdict[groups][animals][weeks])
+                while snaps < heightbyweek[weeks]:
+                    print(str(snaps) + ": number of extra images added") #replace with making a blank header at the trailing end of the week entry
+                    snaps += 1
+                    y_offset += unit_height
+                    print(str(y_offset) + ": y_offset after group banner made")
+            y_offset = unit_height
+            print(str(y_offset) + ": y_offset at end of loop")
+            x_offset += unit_width
+            print(str(x_offset) + ": x_offset at end of loop")
+        
+            
+        #print(x_offset)
+        x_offset += len(dirdict[groups]) * unit_width
+        #print(len(dirdict[groups]), x_offset)
+
+print(makeColumns(vompath))
 
 
 
