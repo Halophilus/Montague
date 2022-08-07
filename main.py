@@ -130,7 +130,9 @@ def makeColumns(dirpath):
     #graphcanvas.paste(makeYLegend(dirpath), (x_offset, y_offset))
     x_offset = unit_width
     for groups in sorted(dirdict.keys()):
-        print(groups)
+        print(groups + ": name of group")
+        print(str(len(dirdict[groups].keys())*unit_width) + " " + str(unit_height))
+
         '''graphcanvas.paste(makeHeader({
             'min_width' : len(dirdict[groups].keys())*unit_width, 
             'min_height' : unit_height
@@ -143,6 +145,8 @@ def makeColumns(dirpath):
         for animals in sorted(dirdict[groups].keys()):
             print(animals + ": name of animal") #Makes leading header for animal column
             #makeHeader(dimensions, animals)
+            y_offset += unit_height
+            print(str(y_offset) + ": y_offset after animal banner is made")
             for weeks in sorted(dirdict[groups][animals]):
                 for files in sorted(dirdict[groups][animals][weeks]):
                     print(files) # replace with placing an image at this file location at the current point
@@ -153,15 +157,15 @@ def makeColumns(dirpath):
                     print(str(snaps) + ": number of extra images added") #replace with making a blank header at the trailing end of the week entry
                     snaps += 1
                     y_offset += unit_height
-                    print(str(y_offset) + ": y_offset after group banner made")
+                    print(str(y_offset) + ": y_offset after filler trailing image is added")
             y_offset = unit_height
             print(str(y_offset) + ": y_offset at end of loop")
             x_offset += unit_width
             print(str(x_offset) + ": x_offset at end of loop")
-        
-            
-        #print(x_offset)
-        x_offset += len(dirdict[groups]) * unit_width
+    print(str(height) + " " + str(width))
+    print(dimensions)
+
+        # x_offset += len(dirdict[groups]) * unit_width
         #print(len(dirdict[groups]), x_offset)
 
 print(makeColumns(vompath))
