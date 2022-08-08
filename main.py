@@ -89,10 +89,8 @@ def makeHeader(dimensions, name):
     fontsize = 1
     myfont = ImageFont.truetype("arial.ttf", fontsize)
     background = Image.new("RGB", (width, height), color = 'black')
-    img_fraction = height / width
-    if img_fraction > 1:
-        img_fraction = width/height
-    while myfont.getlength(name)< img_fraction*background.size[0]:
+    img_fraction = 0.5
+    while myfont.getmask(name).getbbox()[2]< img_fraction*background.size[0] and myfont.getmask(name).getbbox()[3] < img_fraction*background.size[1]:
         myfont = ImageFont.truetype("arial.ttf", fontsize)
         fontsize += 1
     write = ImageDraw.Draw(background)
