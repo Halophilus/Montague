@@ -152,7 +152,7 @@ def makeYLegend(dirpath):
         y_offset += unit_height * heightbyweek[weeks]
     return sidebar
 
-def makeColumns(dirpath):
+def makeColumns(dirpath, dirdict, dirlist):
     '''
     Creates the full montage grid.
     Args:
@@ -209,14 +209,12 @@ def generate_image():
 
     dirlist = breakdown(listify(dirpath))
     dirdict = dictify(dirlist)
-    heightbyweek = getMaxImages(dirdict)
-    dimensions = smallestImgDim(dirlist)
-    makeColumns(dirpath)
+    makeColumns(dirpath, dirdict, dirlist)
     print("Image generated successfully.")
 
 # Tkinter GUI setup
 root = tk.Tk()
-root.title("Timecourse Image Generator")
+root.title("Montague Timecourse Generator")
 
 frame = tk.Frame(root)
 frame.pack(padx=10, pady=10)
