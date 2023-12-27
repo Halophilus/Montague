@@ -1,5 +1,7 @@
 # MONTAGUE - README DOCUMENT
 
+![Title](/docs/title.png)
+
 ## Introduction
 The Montague Timecourse Image Generator is a Python application intended to create a visual grid montage of .tiff images taken over a series of timepoints. It's particularly useful for visualizing time lapse images of different subjects (such as animals in a study) across various time points. The application allows for the organization and comparison of images in a structured format, where each row and column in the grid represents different time points and subjects, respectively.
 
